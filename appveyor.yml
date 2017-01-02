@@ -1,0 +1,28 @@
+version: '{build}'
+
+configuration: Release
+
+branches:
+  only:
+    - master
+
+pull_requests:
+  do_not_increment_build_number: true
+
+before_build:
+  - dotnet restore
+
+after_build:
+  - dotnet publish Aem -c Release --output %APPVEYOR_BUILD_FOLDER%\published
+  - 7z a Aem-v%APPVEYOR_BUILD_VERSION%.zip %APPVEYOR_BUILD_FOLDER%\published\*
+
+artifacts:
+  - path: Aem-v%APPVEYOR_BUILD_VERSION%.zip
+
+deploy:
+  release: Aem-v$(appveyor_build_version)
+  provider: GitHub
+  auth_token:
+    secure: Fu6p8pFA2CEmOLfszUJf3ayF3dL9DsorBluoiQKJUNkpCcAlxlubScpvGDgxFAyH
+  on:
+    branch: master
