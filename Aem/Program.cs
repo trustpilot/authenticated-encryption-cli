@@ -2,28 +2,35 @@
 {
     using System;
     using System.CommandLine;
+    using System.IO;
     using AuthenticatedEncryption;
+    using Microsoft.Extensions.Configuration;
 
     public class Program
     {
         public static void Main(string[] args)
         {
-            var cryptKeyBase64 = string.Empty;
-            var authKeyBase64 = string.Empty;
             var message = string.Empty;
             var command = Command.Encrypt;
             ArgumentSyntax.Parse(args, syntax =>
                 {
                     syntax.DefineCommand("encrypt", ref command, Command.Encrypt, "Encrypt the given plaintext");
-                    syntax.DefineOption("c|cryptkey", ref cryptKeyBase64, "The base64 encoded key to use for encryption");
-                    syntax.DefineOption("a|authkey", ref authKeyBase64, "The base64 encoded key to use for authentication");
                     syntax.DefineParameter("plaintext", ref message, "The plaintext to encrypt");
 
                     syntax.DefineCommand("decrypt", ref command, Command.Decrypt, "Decrypt the given base64 encoded ciphertext");
-                    syntax.DefineOption("c|cryptkey", ref cryptKeyBase64, "The base64 encoded key to use for decryption");
-                    syntax.DefineOption("a|authkey", ref authKeyBase64, "The base64 encoded key to use for authentication");
                     syntax.DefineParameter("ciphertext", ref message, "The base64 encoded ciphertext to decrypt");
                 });
+
+            var configFileName = "appSettings.json";
+            var currentDirectory = Directory.GetCurrentDirectory();
+            var appSettingsFilePath = Path.Combine(currentDirectory, configFileName);
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(currentDirectory)
+                .AddJsonFile(configFileName)
+                .AddJsonFile("appSettings.local.json", optional: true)
+                .Build();
+            var cryptKeyBase64 = configuration["cryptkey"];
+            var authKeyBase64 = configuration["authkey"];
 
             if (string.IsNullOrWhiteSpace(cryptKeyBase64))
             {
