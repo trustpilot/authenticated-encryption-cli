@@ -12,6 +12,8 @@ pull_requests:
 before_build:
   - dotnet restore
 
+skip_tags: true
+
 after_build:
   - dotnet publish Aem -c Release --output %APPVEYOR_BUILD_FOLDER%\published
   - 7z a Aem-v%APPVEYOR_BUILD_VERSION%.zip %APPVEYOR_BUILD_FOLDER%\published\*
