@@ -10,15 +10,11 @@
     {
         public static void Main(string[] args)
         {
-            var message = string.Empty;
             var command = Command.Encrypt;
             ArgumentSyntax.Parse(args, syntax =>
                 {
                     syntax.DefineCommand("encrypt", ref command, Command.Encrypt, "Encrypt the given plaintext");
-                    syntax.DefineParameter("plaintext", ref message, "The plaintext to encrypt");
-
                     syntax.DefineCommand("decrypt", ref command, Command.Decrypt, "Decrypt the given base64 encoded ciphertext");
-                    syntax.DefineParameter("ciphertext", ref message, "The base64 encoded ciphertext to decrypt");
                 });
 
             var configFileName = "appSettings.json";
@@ -45,6 +41,8 @@
 
                 Environment.Exit(1);
             }
+
+            var message = Console.In.ReadToEnd();
 
             if (string.IsNullOrWhiteSpace(message))
             {
