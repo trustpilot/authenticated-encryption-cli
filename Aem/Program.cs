@@ -27,14 +27,14 @@
 
             if (string.IsNullOrWhiteSpace(cryptKeyBase64))
             {
-                Console.WriteLine("error: cryptkey is required");
+                Console.Error.WriteLine($"error: please insert your cryptkey in the file: {appSettingsFilePath}");
 
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(authKeyBase64))
             {
-                Console.WriteLine("error: authkey is required");
+                Console.Error.WriteLine($"error: please insert your authkey in the file: {appSettingsFilePath}");
 
                 return;
             }
@@ -45,11 +45,11 @@
                 {
                     case Command.Encrypt:
 
-                        Console.WriteLine("error: plaintext is required");
+                        Console.Error.WriteLine("error: plaintext is required");
                         break;
                     case Command.Decrypt:
 
-                        Console.WriteLine("error: ciphertext is required");
+                        Console.Error.WriteLine("error: ciphertext is required");
                         break;
                 }
 
