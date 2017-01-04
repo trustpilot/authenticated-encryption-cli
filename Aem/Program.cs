@@ -2,58 +2,53 @@
 {
     using System;
     using System.CommandLine;
+    using System.IO;
     using AuthenticatedEncryption;
+    using Microsoft.Extensions.Configuration;
 
     public class Program
     {
         public static void Main(string[] args)
         {
-            var cryptKeyBase64 = string.Empty;
-            var authKeyBase64 = string.Empty;
-            var message = string.Empty;
             var command = Command.Encrypt;
             ArgumentSyntax.Parse(args, syntax =>
                 {
                     syntax.DefineCommand("encrypt", ref command, Command.Encrypt, "Encrypt the given plaintext");
-                    syntax.DefineOption("c|cryptkey", ref cryptKeyBase64, "The base64 encoded key to use for encryption");
-                    syntax.DefineOption("a|authkey", ref authKeyBase64, "The base64 encoded key to use for authentication");
-                    syntax.DefineParameter("plaintext", ref message, "The plaintext to encrypt");
-
                     syntax.DefineCommand("decrypt", ref command, Command.Decrypt, "Decrypt the given base64 encoded ciphertext");
-                    syntax.DefineOption("c|cryptkey", ref cryptKeyBase64, "The base64 encoded key to use for decryption");
-                    syntax.DefineOption("a|authkey", ref authKeyBase64, "The base64 encoded key to use for authentication");
-                    syntax.DefineParameter("ciphertext", ref message, "The base64 encoded ciphertext to decrypt");
                 });
+
+            var configFileName = "appSettings.json";
+            var currentDirectory = Directory.GetCurrentDirectory();
+            var appSettingsFilePath = Path.Combine(currentDirectory, configFileName);
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(currentDirectory)
+                .AddJsonFile(configFileName)
+                .AddJsonFile("appSettings.local.json", optional: true)
+                .Build();
+            var cryptKeyBase64 = configuration["cryptkey"];
+            var authKeyBase64 = configuration["authkey"];
 
             if (string.IsNullOrWhiteSpace(cryptKeyBase64))
             {
-                Console.WriteLine("error: cryptkey is required");
+                Console.Error.WriteLine($"error: please insert your cryptkey in the file: {appSettingsFilePath}");
 
-                return;
+                Environment.Exit(1);
             }
 
             if (string.IsNullOrWhiteSpace(authKeyBase64))
             {
-                Console.WriteLine("error: authkey is required");
+                Console.Error.WriteLine($"error: please insert your authkey in the file: {appSettingsFilePath}");
 
-                return;
+                Environment.Exit(1);
             }
+
+            var message = Console.In.ReadToEnd();
 
             if (string.IsNullOrWhiteSpace(message))
             {
-                switch (command)
-                {
-                    case Command.Encrypt:
+                Console.Error.WriteLine("error: please supply an input for encryption/decryption");
 
-                        Console.WriteLine("error: plaintext is required");
-                        break;
-                    case Command.Decrypt:
-
-                        Console.WriteLine("error: ciphertext is required");
-                        break;
-                }
-
-                return;
+                Environment.Exit(1);
             }
 
             var cryptKey = Convert.FromBase64String(cryptKeyBase64);
@@ -70,6 +65,8 @@
                     Console.Write(AuthenticatedEncryption.Decrypt(message, cryptKey, authKey));
                     break;
             }
+
+            Environment.Exit(0);
         }
 
         private enum Command
