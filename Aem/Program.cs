@@ -36,14 +36,14 @@
             {
                 Console.Error.WriteLine($"error: please insert your cryptkey in the file: {appSettingsFilePath}");
 
-                return;
+                Environment.Exit(1);
             }
 
             if (string.IsNullOrWhiteSpace(authKeyBase64))
             {
                 Console.Error.WriteLine($"error: please insert your authkey in the file: {appSettingsFilePath}");
 
-                return;
+                Environment.Exit(1);
             }
 
             if (string.IsNullOrWhiteSpace(message))
@@ -60,7 +60,7 @@
                         break;
                 }
 
-                return;
+                Environment.Exit(1);
             }
 
             var cryptKey = Convert.FromBase64String(cryptKeyBase64);
@@ -77,6 +77,8 @@
                     Console.Write(AuthenticatedEncryption.Decrypt(message, cryptKey, authKey));
                     break;
             }
+
+            Environment.Exit(0);
         }
 
         private enum Command
