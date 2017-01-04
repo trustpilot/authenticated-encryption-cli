@@ -9,18 +9,45 @@ A command line interface for encrypting and decrypting data using authenticated 
 
 ## Usage
 
-To encrypt a string, call the Authenticated Encryption Manager like this:
+Before you can use the Authenticated Encryption Manager (AEM), you need to insert your base64 encoded cryptkey and authkey in the appSettings.json file:
 
 ```
-dotnet Aem.dll encrypt -c <crypt key> -a <auth key> <text to encrypt>
+{
+  "cryptkey": "<insert your cryptkey>",
+  "authkey": "<insert your authkey>"
+}
 ```
 
-The tool will output a base64 encoded string with the encrypted message (the ciphertext).
+### Encrypt
 
-To decrypt a base64 encoded string, do this:
+To encrypt a string, call AEM like this:
 
 ```
-dotnet Aem.dll decrypt -c <cryptkey> -a <authkey> <base 64 encoded ciphertext>
+echo "<text to encrypt>" | dotnet Aem.dll encrypt
 ```
 
-The tool will output the decrypted message.
+You can also encrypt the contents of a file, like this:
+
+```
+dotnet Aem.dll encrypt < <path to file>
+```
+
+If you want to paste or write a multiline text to encrypt, just call AEM like this, and you will be able to write or paste whatever text you want to encrypt. When you are done writing, type CTRL+Z in Windows or CTRL+D in unix systems and then ENTER to send EOF:
+
+```
+dotnet Aem.dll encrypt
+```
+
+No matter which way you decide to run AEM, it will output a base64 encoded string with the encrypted message (the ciphertext). If you want to store the ciphertext in a file, you can easily do that, like this:
+
+```
+echo "<text to encrypt>" | dotnet Aem.dll encrypt > <path to file>
+```
+
+### Decrypt
+
+Decryption can be done in the same ways as encryption explained above. You just need to replace the "encrypt" command with "decrypt":
+
+```
+echo "<text to decrypt>" | dotnet Aem.dll decrypt
+```
