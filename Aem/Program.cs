@@ -48,17 +48,7 @@
 
             if (string.IsNullOrWhiteSpace(message))
             {
-                switch (command)
-                {
-                    case Command.Encrypt:
-
-                        Console.Error.WriteLine("error: plaintext is required");
-                        break;
-                    case Command.Decrypt:
-
-                        Console.Error.WriteLine("error: ciphertext is required");
-                        break;
-                }
+                Console.Error.WriteLine("error: please supply an input for encryption/decryption");
 
                 Environment.Exit(1);
             }
