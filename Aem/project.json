@@ -9,6 +9,8 @@
       "type": "platform",
       "version": "1.0.1"
     },
+    "Microsoft.Extensions.Configuration": "1.1.0",
+    "Microsoft.Extensions.Configuration.Json": "1.1.0",
     "System.CommandLine": "0.1.0-e161027-2",
     "AuthenticatedEncryption": "0.1.0-beta-11"
   },
