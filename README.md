@@ -43,6 +43,10 @@ No matter which way you decide to run AEM, it will output a base64 encoded strin
 echo "<text to encrypt>" | dotnet Aem.dll encrypt > <path to file>
 ```
 
+#### Url encoded
+
+If you would like AEM to URL encode the base64 encoded ciphertext, then you can parse add the `--urlencode` flag to the encrypt command.
+
 ### Decrypt
 
 Decryption can be done in the same ways as encryption explained above. You just need to replace the "encrypt" command with "decrypt":
@@ -50,3 +54,7 @@ Decryption can be done in the same ways as encryption explained above. You just 
 ```
 echo "<text to decrypt>" | dotnet Aem.dll decrypt
 ```
+
+#### Url decode
+
+If your input has been url encoded (maybe by using the `--urlencode` flag to encrypt), then you can parse the `--urldecode` flag to the decrypt command, to get AEM to do a URL decode before decrypting the input.
