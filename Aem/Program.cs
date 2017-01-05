@@ -3,6 +3,7 @@
     using System;
     using System.CommandLine;
     using System.IO;
+    using System.Net;
     using AuthenticatedEncryption;
     using Microsoft.Extensions.Configuration;
 
@@ -10,10 +11,13 @@
     {
         public static void Main(string[] args)
         {
+            var urlEncode = false;
             var command = Command.Encrypt;
             ArgumentSyntax.Parse(args, syntax =>
                 {
                     syntax.DefineCommand("encrypt", ref command, Command.Encrypt, "Encrypt the given plaintext");
+                    syntax.DefineOption("urlencode", ref urlEncode, "Url encode the base64 encoded ciphertext");
+
                     syntax.DefineCommand("decrypt", ref command, Command.Decrypt, "Decrypt the given base64 encoded ciphertext");
                 });
 
@@ -58,7 +62,14 @@
             {
                 case Command.Encrypt:
 
-                    Console.Write(AuthenticatedEncryption.Encrypt(message, cryptKey, authKey));
+                    var ciphertext = AuthenticatedEncryption.Encrypt(message, cryptKey, authKey);
+
+                    if (urlEncode)
+                    {
+                        ciphertext = WebUtility.UrlEncode(ciphertext);
+                    }
+
+                    Console.Write(ciphertext);
                     break;
                 case Command.Decrypt:
 
