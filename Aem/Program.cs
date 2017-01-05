@@ -88,11 +88,5 @@
 
             return configuration;
         }
-
-        private enum Command
-        {
-            Encrypt,
-            Decrypt
-        }
     }
 }
