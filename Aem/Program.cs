@@ -30,7 +30,14 @@
                     break;
                 case Command.Decrypt:
 
-                    Console.Write(AuthenticatedEncryption.Decrypt(arguments.Message, configuration.CryptKey, configuration.AuthKey));
+                    var message = arguments.Message;
+
+                    if (arguments.UrlDecode)
+                    {
+                        message = WebUtility.UrlDecode(message);
+                    }
+
+                    Console.Write(AuthenticatedEncryption.Decrypt(message, configuration.CryptKey, configuration.AuthKey));
                     break;
             }
         }
@@ -38,6 +45,7 @@
         private static Arguments ParseArguments(IEnumerable<string> args)
         {
             var urlEncode = false;
+            var urlDecode = false;
             var command = Command.Encrypt;
             ArgumentSyntax.Parse(
                 args,
@@ -47,6 +55,7 @@
                         syntax.DefineOption("urlencode", ref urlEncode, "Url encode the base64 encoded ciphertext");
 
                         syntax.DefineCommand("decrypt", ref command, Command.Decrypt, "Decrypt the given base64 encoded ciphertext");
+                        syntax.DefineOption("urldecode", ref urlDecode, "Url decode the input before decrypting");
                     });
 
             var message = Console.In.ReadToEnd();
@@ -58,7 +67,7 @@
                 Environment.Exit(1);
             }
 
-            return new Arguments(command, message, urlEncode);
+            return new Arguments(command, message, urlEncode, urlDecode);
         }
 
         private static Configuration ParseConfiguration()
