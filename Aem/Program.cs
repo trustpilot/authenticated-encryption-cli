@@ -33,8 +33,6 @@
                     Console.Write(AuthenticatedEncryption.Decrypt(arguments.Message, configuration.CryptKey, configuration.AuthKey));
                     break;
             }
-
-            Environment.Exit(0);
         }
 
         private static Arguments ParseArguments(IEnumerable<string> args)
