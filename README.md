@@ -4,8 +4,7 @@ A command line interface for encrypting and decrypting data using authenticated 
 ## Installation
 
 1. [Download](https://www.microsoft.com/net/download/core) and install .NET Core for your operating system
-2. [Download](https://github.com/trustpilot/authenticated-encryption-cli/releases) the CLI
-3. Unzip the CLI
+2. [Download](https://github.com/trustpilot/authenticated-encryption-cli/releases) and unzip Authenticated Encryption Manager
 
 ## Usage
 
