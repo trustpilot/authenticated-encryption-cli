@@ -37,7 +37,16 @@
                         message = WebUtility.UrlDecode(message);
                     }
 
-                    Console.Write(AuthenticatedEncryption.Decrypt(message, configuration.CryptKey, configuration.AuthKey));
+                    try
+                    {
+                        Console.Write(AuthenticatedEncryption.Decrypt(message, configuration.CryptKey, configuration.AuthKey));
+                    }
+                    catch (FormatException)
+                    {
+                        Console.Error.WriteLine("error: the message to decrypt is not in a valid format");
+
+                        Environment.Exit(1);
+                    }
                     break;
             }
         }
