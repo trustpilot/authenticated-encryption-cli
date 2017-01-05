@@ -15,14 +15,11 @@
             var configuration = ParseConfiguration();
             var arguments = ParseArguments(args);
 
-            var cryptKey = Convert.FromBase64String(configuration.CryptKeyBase64);
-            var authKey = Convert.FromBase64String(configuration.AuthKeyBase64);
-
             switch (arguments.Command)
             {
                 case Command.Encrypt:
 
-                    var ciphertext = AuthenticatedEncryption.Encrypt(arguments.Message, cryptKey, authKey);
+                    var ciphertext = AuthenticatedEncryption.Encrypt(arguments.Message, configuration.CryptKey, configuration.AuthKey);
 
                     if (arguments.UrlEncode)
                     {
@@ -33,7 +30,7 @@
                     break;
                 case Command.Decrypt:
 
-                    Console.Write(AuthenticatedEncryption.Decrypt(arguments.Message, cryptKey, authKey));
+                    Console.Write(AuthenticatedEncryption.Decrypt(arguments.Message, configuration.CryptKey, configuration.AuthKey));
                     break;
             }
 
@@ -76,27 +73,48 @@
                 .AddJsonFile(configFileName)
                 .AddJsonFile("appSettings.local.json", optional: true)
                 .Build();
-            var configuration = new Configuration
-                {
-                    AuthKeyBase64 = configurationRoot["authkey"],
-                    CryptKeyBase64 = configurationRoot["cryptkey"]
-                };
+            var cryptKeyBase64 = configurationRoot["cryptkey"];
+            var authKeyBase64 = configurationRoot["authkey"];
 
-            if (string.IsNullOrWhiteSpace(configuration.CryptKeyBase64))
+            if (string.IsNullOrWhiteSpace(cryptKeyBase64))
             {
                 Console.Error.WriteLine($"error: please insert your cryptkey in the file: {appSettingsFilePath}");
 
                 Environment.Exit(1);
             }
 
-            if (string.IsNullOrWhiteSpace(configuration.AuthKeyBase64))
+            if (string.IsNullOrWhiteSpace(authKeyBase64))
             {
                 Console.Error.WriteLine($"error: please insert your authkey in the file: {appSettingsFilePath}");
 
                 Environment.Exit(1);
             }
 
-            return configuration;
+            byte[] cryptKey = null;
+            try
+            {
+                cryptKey = Convert.FromBase64String(cryptKeyBase64);
+            }
+            catch (FormatException)
+            {
+                Console.Error.WriteLine("error: cryptkey is not a valid base64 string");
+
+                Environment.Exit(1);
+            }
+
+            byte[] authKey = null;
+            try
+            {
+                authKey = Convert.FromBase64String(authKeyBase64);
+            }
+            catch (FormatException)
+            {
+                Console.Error.WriteLine("error: authkey is not a valid base64 string");
+
+                Environment.Exit(1);
+            }
+
+            return new Configuration { AuthKey = authKey, CryptKey = cryptKey };
         }
     }
 }
