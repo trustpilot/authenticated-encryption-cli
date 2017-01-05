@@ -1,6 +1,7 @@
 ﻿namespace Aem
 {
     using System;
+    using System.Collections.Generic;
     using System.CommandLine;
     using System.IO;
     using System.Net;
@@ -12,15 +13,46 @@
         public static void Main(string[] args)
         {
             var configuration = ParseConfiguration();
+            var arguments = ParseArguments(args);
+
+            var cryptKey = Convert.FromBase64String(configuration.CryptKeyBase64);
+            var authKey = Convert.FromBase64String(configuration.AuthKeyBase64);
+
+            switch (arguments.Command)
+            {
+                case Command.Encrypt:
+
+                    var ciphertext = AuthenticatedEncryption.Encrypt(arguments.Message, cryptKey, authKey);
+
+                    if (arguments.UrlEncode)
+                    {
+                        ciphertext = WebUtility.UrlEncode(ciphertext);
+                    }
+
+                    Console.Write(ciphertext);
+                    break;
+                case Command.Decrypt:
+
+                    Console.Write(AuthenticatedEncryption.Decrypt(arguments.Message, cryptKey, authKey));
+                    break;
+            }
+
+            Environment.Exit(0);
+        }
+
+        private static Arguments ParseArguments(IEnumerable<string> args)
+        {
             var urlEncode = false;
             var command = Command.Encrypt;
-            ArgumentSyntax.Parse(args, syntax =>
-                {
-                    syntax.DefineCommand("encrypt", ref command, Command.Encrypt, "Encrypt the given plaintext");
-                    syntax.DefineOption("urlencode", ref urlEncode, "Url encode the base64 encoded ciphertext");
+            ArgumentSyntax.Parse(
+                args,
+                syntax =>
+                    {
+                        syntax.DefineCommand("encrypt", ref command, Command.Encrypt, "Encrypt the given plaintext");
+                        syntax.DefineOption("urlencode", ref urlEncode, "Url encode the base64 encoded ciphertext");
 
-                    syntax.DefineCommand("decrypt", ref command, Command.Decrypt, "Decrypt the given base64 encoded ciphertext");
-                });
+                        syntax.DefineCommand("decrypt", ref command, Command.Decrypt, "Decrypt the given base64 encoded ciphertext");
+                    });
 
             var message = Console.In.ReadToEnd();
 
@@ -31,29 +63,7 @@
                 Environment.Exit(1);
             }
 
-            var cryptKey = Convert.FromBase64String(configuration.CryptKeyBase64);
-            var authKey = Convert.FromBase64String(configuration.AuthKeyBase64);
-
-            switch (command)
-            {
-                case Command.Encrypt:
-
-                    var ciphertext = AuthenticatedEncryption.Encrypt(message, cryptKey, authKey);
-
-                    if (urlEncode)
-                    {
-                        ciphertext = WebUtility.UrlEncode(ciphertext);
-                    }
-
-                    Console.Write(ciphertext);
-                    break;
-                case Command.Decrypt:
-
-                    Console.Write(AuthenticatedEncryption.Decrypt(message, cryptKey, authKey));
-                    break;
-            }
-
-            Environment.Exit(0);
+            return new Arguments(command, message, urlEncode);
         }
 
         private static Configuration ParseConfiguration()
