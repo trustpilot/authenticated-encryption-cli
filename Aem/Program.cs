@@ -27,7 +27,7 @@
                         ciphertext = WebUtility.UrlEncode(ciphertext);
                     }
 
-                    Console.Write(ciphertext);
+                    WriteResultToOutput(ciphertext);
                     break;
                 case Command.Decrypt:
 
@@ -40,7 +40,7 @@
 
                     try
                     {
-                        Console.Write(AuthenticatedEncryption.Decrypt(message, configuration.CryptKey, configuration.AuthKey));
+                        WriteResultToOutput(AuthenticatedEncryption.Decrypt(message, configuration.CryptKey, configuration.AuthKey));
                     }
                     catch (FormatException)
                     {
@@ -49,6 +49,14 @@
                         Environment.Exit(1);
                     }
                     break;
+            }
+        }
+
+        private static void WriteResultToOutput(string result)
+        {
+            using (var streamWriter = new StreamWriter(Console.OpenStandardOutput(), new UTF8Encoding(false)))
+            {
+                streamWriter.WriteLine(result);
             }
         }
 
