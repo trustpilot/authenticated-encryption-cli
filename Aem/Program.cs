@@ -5,6 +5,7 @@
     using System.CommandLine;
     using System.IO;
     using System.Net;
+    using System.Text;
     using AuthenticatedEncryption;
     using Microsoft.Extensions.Configuration;
 
@@ -67,7 +68,11 @@
                         syntax.DefineOption("urldecode", ref urlDecode, "Url decode the input before decrypting");
                     });
 
-            var message = Console.In.ReadToEnd();
+            string message;
+            using (var streamReader = new StreamReader(Console.OpenStandardInput()))
+            {
+                message = streamReader.ReadToEnd();
+            }
 
             if (string.IsNullOrWhiteSpace(message))
             {
