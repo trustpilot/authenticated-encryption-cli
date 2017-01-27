@@ -5,6 +5,7 @@
     using System.CommandLine;
     using System.IO;
     using System.Net;
+    using System.Security.Cryptography;
     using System.Text;
     using AuthenticatedEncryption;
     using Microsoft.Extensions.Configuration;
@@ -45,6 +46,12 @@
                     catch (FormatException)
                     {
                         Console.Error.WriteLine("error: the message to decrypt is not in a valid format");
+
+                        Environment.Exit(1);
+                    }
+                    catch (CryptographicException cryptographicException)
+                    {
+                        Console.Error.WriteLine($"error: {cryptographicException.Message}");
 
                         Environment.Exit(1);
                     }
