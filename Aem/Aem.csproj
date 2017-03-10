@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp1.0</TargetFramework>
+    <AssemblyName>Aem</AssemblyName>
+    <OutputType>Exe</OutputType>
+    <PackageId>Aem</PackageId>
+    <RuntimeFrameworkVersion>1.0.4</RuntimeFrameworkVersion>
+    <PackageTargetFallback>$(PackageTargetFallback);dnxcore50</PackageTargetFallback>
+    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="1.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="1.1.1" />
+    <PackageReference Include="System.CommandLine" Version="0.1.0-e161027-2" />
+    <PackageReference Include="AuthenticatedEncryption" Version="0.1.0-beta-11" />
+  </ItemGroup>
+
+</Project>
