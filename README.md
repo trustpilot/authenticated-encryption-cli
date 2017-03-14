@@ -1,4 +1,7 @@
 # Authenticated Encryption CLI
+
+[![Build status](https://ci.appveyor.com/api/projects/status/q2emwvyftx922oxh?svg=true)](https://ci.appveyor.com/project/TrustpilotAppVeyor/authenticated-encryption-cli)
+
 A command line interface for encrypting and decrypting data using authenticated encryption
 
 ## Installation
