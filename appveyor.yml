@@ -1,4 +1,4 @@
-version: '{build}'
+version: "{build}"
 
 image: Visual Studio 2017
 
@@ -17,11 +17,11 @@ before_build:
 skip_tags: true
 
 after_build:
-  - dotnet publish Aem -c Release --output %APPVEYOR_BUILD_FOLDER%\published
-  - 7z a Aem-v%APPVEYOR_BUILD_VERSION%.zip %APPVEYOR_BUILD_FOLDER%\published\*
+  - for %%x in (win-x64 win-x86 win-arm win-arm64 linux-x64 linux-arm osx-x64) do (dotnet publish Aem -c Release -o %APPVEYOR_BUILD_FOLDER%\published-%%x --self-contained -r %%x)
+  - for %%x in (win-x64 win-x86 win-arm win-arm64 linux-x64 linux-arm osx-x64) do (7z a Aem-%%x-v%APPVEYOR_BUILD_VERSION%.zip %APPVEYOR_BUILD_FOLDER%\published-%%x\*)
 
 artifacts:
-  - path: Aem-v%APPVEYOR_BUILD_VERSION%.zip
+  - path: Aem-*-v%APPVEYOR_BUILD_VERSION%.zip
 
 deploy:
   release: Aem-v$(appveyor_build_version)
